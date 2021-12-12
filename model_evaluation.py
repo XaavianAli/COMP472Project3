@@ -12,7 +12,9 @@ def letter_to_index(index_letter):
     elif index_letter == "d":
         return 4
 
-corpus = downloader.load("word2vec-google-news-300")
+model = "conceptnet-numberbatch-17-06-300"
+
+corpus = downloader.load(model)
 
 with open('synonym_guess.txt') as f:
     lines = f.readlines()
@@ -23,7 +25,7 @@ guess_count = 0
 for i in range(480):
     if i % 6 != 0:
         continue
-    
+
     must_guess = False
 
     line = lines[i].replace("\t", "").replace("\n", "").replace(".", "")
@@ -59,7 +61,7 @@ for i in range(480):
         if similarity > score:
             guess = word
             score = similarity
-    
+
     if word_found == False:
         must_guess = True
 
@@ -76,7 +78,7 @@ for i in range(480):
     results.append([guess_word, best_synonym, guess, label])
 
 header = ["question-word", "correct answer-word", "model's guess-word", "result label"]
-with open('word2vec-google-news-300-details.csv', 'w') as f:
+with open(model + '-details.csv', 'w') as f:
     writer = csv.writer(f)
     writer.writerow(header)
     writer.writerows(results)
@@ -84,7 +86,7 @@ with open('word2vec-google-news-300-details.csv', 'w') as f:
 corpus_length = len(corpus.key_to_index)
 without_guess_count = 80 - guess_count
 accuracy = correct_count / without_guess_count
-analysis = ["word2vec-google-news-300", corpus_length, correct_count, without_guess_count, accuracy]
-with open('analysis.csv', 'w') as f:
+analysis = [model, corpus_length, correct_count, without_guess_count, accuracy]
+with open('analysis.csv', 'a') as f:
     writer = csv.writer(f)
     writer.writerow(analysis)
